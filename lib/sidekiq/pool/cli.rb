@@ -20,7 +20,7 @@ module Sidekiq
       alias_method :run_child, :run
 
       def write_pid
-        super if @master_pid == ::Process.pid
+        super if defined?(super) and @master_pid == ::Process.pid
       end
 
       def run
@@ -56,7 +56,12 @@ module Sidekiq
         if @system_booted
           logger.info "#{::Process.pid} - environment already started"
         else
-          super
+          if defined?(super)
+            super
+          else
+            boot_application
+          end
+
           @system_booted = true
         end
       end
